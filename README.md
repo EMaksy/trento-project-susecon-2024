@@ -57,4 +57,52 @@ file_path="$(pwd)/secrets.txt" && \
 echo -e "Trento web and wanda keys have been generated and saved to \033[0;31m$file_path\033[0m"
 
 ```
+## Trento Login data
+If you followed the manual installation guide, this are the login data for trento-web which is reachable under https://trento.example.com/
 
+```
+username: admin
+password: test1234
+```
+
+
+## Test Trento by using fake agents to simulate trento
+In order to simulate trento for this demo, we will use [barbecue  docker images](https://github.com/trento-project/barbecue) to simulate real agents installed on a host system.
+
+First check if docker is installed: 
+```
+docker --version
+```
+
+
+If docker is missing then enable the container`s module
+```
+SUSEConnect --product sle-module-containers/15.5/x86_64
+```
+
+```
+zypper install docker
+```
+```
+systemctl enable --now docker
+```
+
+Open trento web console by visiting https://trento.example.com/settings and copy the API key.
+
+>Note: Replace TRENTO_API_KEY=<API_KEY> with Trento's setting key in the docker commands.
+
+Start the first fake agent
+```
+sudo docker run -d --hostname hana_node01 --network=host -e TRENTO_API_KEY=<API_KEY> -e TRENTO_FACTS_SERVICE_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost  -e TRENTO_SERVER_URL=http://localhost:4000 ghcr.io/trento-project/barbecue-hana_node01
+```
+After executing the first Docker command, a new host should be added at https://trento.example.com/hosts.
+
+Start the second fake agent host:
+```
+sudo docker run -d --hostname hana_node02 --network=host -e TRENTO_API_KEY=<API_KEY> -e TRENTO_FACTS_SERVICE_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost  -e TRENTO_SERVER_URL=http://localhost:4000 ghcr.io/trento-project/barbecue-hana_node02
+```
+
+After executing both commands, a cluster will be shown at 
+https://trento.example.com/clusters. 
+
+Test checks execution on the newly added Cluster
