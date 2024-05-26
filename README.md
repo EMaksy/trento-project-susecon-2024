@@ -1,6 +1,7 @@
 # Handout manual installation SUSECON 2024
 
-This is a handout for the Manual installation guide for [Trento](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md). 
+This is a handout for the Manual installation guide for [Trento](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md).
+
 The main reason for this is to provide references and helpers to make the installation easier to follow.
 
 ## Manual Installation Agenda
@@ -127,3 +128,15 @@ After executing both commands, a cluster will be shown at
 https://trento.example.com/clusters. 
 
 Test checks execution on the newly added Cluster
+
+# Sources: 
+
+- https://github.com/trento-project
+- https://github.com/trento-project/web
+- https://github.com/trento-project/wanda
+- https://github.com/trento-project/agent
+- https://github.com/trento-project/docs
+- https://github.com/trento-project/helm-charts
+- https://github.com/trento-project/ansible
+- https://github.com/trento-project/docs/blob/main/guides/manual-installation.md
+- https://www.trento-project.io/
