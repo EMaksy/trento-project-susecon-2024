@@ -3,6 +3,17 @@
 This is a handout for the Manual installation guide for [Trento](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md). 
 The main reason for this is to provide references and helpers to make the installation easier to follow.
 
+## Manual Installation Agenda
+
+1. [Install Trento manually on SLE 15 SP5 virtual machine](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#installation)
+2. Install and configure [Prometheus](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-prometheus-optional), [PostgreSQL](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-postgresql) and [RabbitMQ](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-rabbitmq)
+3. Install and configure [Trento Web and Wanda by using RPM packages](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-trento-server-components)
+4. Creating a [Self-Signed Certificate](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#option-1-creating-a-self-signed-certificate)
+5. [Install and configure NGINX](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-and-configure-nginx)
+6. [Accessing the Trento UI](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#accessing-the-trento-web-ui)
+7. [Run Demo Trento Agents to populate the web UI](https://github.com/EMaksy/trento-project-susecon-2024?tab=readme-ov-file#test-trento-by-using-fake-agents-to-simulate-trento)
+
+
 ## Add trento-web and trento-wanda repository
 Currently, the trento rpm's are in the release process and will be soon available for SLE15 SP5. As this process is not finished, add the alternative source repository.
 ```
@@ -43,7 +54,7 @@ Press t to trust and install Trento rpm's
 
 ```zypper install trento-web trento-wanda```
 
-## RPM configuration env helper
+## Generate and Configure Secret Keys for Trento
 The next step requires to configure trento-web and trento-wanda.
 To create a file with secrets in the current directory execute: 
 
@@ -55,8 +66,18 @@ To create a file with secrets in the current directory execute:
 } > secrets.txt && \
 file_path="$(pwd)/secrets.txt" && \
 echo -e "Trento web and wanda keys have been generated and saved to \033[0;31m$file_path\033[0m"
-
 ```
+Output the secrets: 
+```
+cat $file_path
+```
+Expected output:
+```
+SECRET_KEY_BASE=UdqS94jVOBE38c8qzEHUxFVOuLLCZWO/CdIeMDfFDzoVwgUornIwyuwoLAaPyd1M
+ACCESS_TOKEN_ENC_SECRET=mTS7b61Wa95sJkJRMq72+SkankPdAk1KhjHou5mdNIup4sBnLzcg3SCaqbxwYxPD
+REFRESH_TOKEN_ENC_SECRET=X1l8SSk4UR6lZDZJkXdxAwDOH0mr0QZ9f6Lm0KFfhTf/fTnqe40d4TCvD+EjHT6q
+```
+
 ## Trento Login data
 If you followed the manual installation guide, this are the login data for trento-web which is reachable under https://trento.example.com/
 
