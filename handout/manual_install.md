@@ -1,6 +1,6 @@
 # Manual Install Cheat Sheet
 
-## Access VM
+## Access machine
 
 ```bash
 ssh <<USER>>@<<IP_ADDRESS>> -i <<PATH_TO_PRIVATE_SSH_KEY>>
@@ -190,13 +190,13 @@ sudo rabbitmqctl set_permissions -p vhost trento_user ".*" ".*" ".*"
 ```
 
 ## Install Trento using RPM packages
-### Install 
+
 ### Add open build service repository
 ```bash
 sudo zypper ar -f https://download.opensuse.org/repositories/devel:/sap:/trento:/factory/SLE_15_SP5/ devel:sap:trento:factory
 ```
 
-### Install Web and Wanda
+### Install Trento-Web/Wanda
 ```bash
 sudo zypper install trento-web trento-wanda
 ```
@@ -230,34 +230,34 @@ REFRESH_TOKEN_ENC_SECRET
 AMQP_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost
 DATABASE_URL=ecto://trento_user:web_password@localhost/trento
 EVENTSTORE_URL=ecto://trento_user:web_password@localhost/trento_event_store
-ENABLE_ALERTING=false
 PROMETHEUS_URL=http://localhost:9090
-SECRET_KEY_BASE=some-secret
-ACCESS_TOKEN_ENC_SECRET=some-secret
-REFRESH_TOKEN_ENC_SECRET=some-secret
+SECRET_KEY_BASE=rd9yv6K3DLqovfCzA+qjX6T2YM1gVYVxl+e/fx3gXWHc6WFBkF3Fi9AEEsZGubE3
+ACCESS_TOKEN_ENC_SECRET=ejkJuJSrzX9QL2VD5Lb2epho2pCRhDSqpfKASXEtgvGye0qDltJrU1ZGHY8oim2E
+REFRESH_TOKEN_ENC_SECRET=CKdeaee2IBoQA1zxVqXlqa8a2oWYGkFPmlkBvsM0yYBa78dViwj2oGxw802QXisi
 ADMIN_USER=admin
 ADMIN_PASSWORD=test1234
+ENABLE_ALERTING=false
 ENABLE_API_KEY=false
 CHARTS_ENABLED=true
 PORT=4000
 ```
 
-Create and adjust wanda configuration
+Create and adjust wanda configuration.
 
 ```bash
  sudo vim /etc/trento/trento-wanda
 ```
-Change SECRET_KEY_BASE and ACCESS_TOKEN_ENC_SECRET in the configuration.
+
 ```bash
 CORS_ORIGIN=http://localhost
-SECRET_KEY_BASE=some-secret
-ACCESS_TOKEN_ENC_SECRET=some-secret
+SECRET_KEY_BASE=rd9yv6K3DLqovfCzA+qjX6T2YM1gVYVxl+e/fx3gXWHc6WFBkF3Fi9AEEsZGubE3
+ACCESS_TOKEN_ENC_SECRET=ejkJuJSrzX9QL2VD5Lb2epho2pCRhDSqpfKASXEtgvGye0qDltJrU1ZGHY8oim2E
 AMQP_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost
 DATABASE_URL=ecto://wanda_user:wanda_password@localhost/wanda
 PORT=4001
 ```
 
-enable trento
+Enable Trento server
 ```bash
 systemctl enable --now trento-web trento-wanda
 ```
@@ -266,9 +266,8 @@ systemctl enable --now trento-web trento-wanda
 ```bash
 curl http://localhost:4000/api/readyz; curl http://localhost:4000/api/healthz; echo
 curl http://localhost:4001/api/readyz; curl http://localhost:4001/api/healthz; echo
-
 ```
-### Generate SSL KEY
+## Generate SSL KEY
 Prepare SSL certificate
 ```bash
 sudo openssl req -newkey rsa:2048 --nodes -keyout trento.key -x509 -days 5 -out trento.crt -addext "subjectAltName = DNS:trento.example.com"
@@ -283,7 +282,7 @@ sudo mv trento.key /etc/ssl/private/trento.key
 ```bash
 sudo mv trento.crt /etc/ssl/certs/trento.crt
 ```
-### Install and configure NGINX
+## Install and configure NGINX
 
 Install nginx rpm
 ```bash
@@ -302,7 +301,7 @@ sudo vim /etc/nginx/conf.d/trento.conf
 
 Add configuration to ```/etc/nginx/conf.d/trento.conf```
 
-```bash
+```
 server {
     # Redirect HTTP to HTTPS
     listen 80;
@@ -370,13 +369,15 @@ sudo systemctl reload nginx
 
 ## Access Trento
 Edit `/etc/hosts` on your machine
+
 ```bash
 sudo vim /etc/hosts
 ```
 
-Add entry to configuration:
+Add entry to configuration on top of the config file:
+
 ```
 <<IP_ADRESS_OF_VM>>   trento.example.com
 ```
 
-Access Trento trough browser by visiting ```trento.example.com```
+Access Trento through browser by visiting ```trento.example.com```
