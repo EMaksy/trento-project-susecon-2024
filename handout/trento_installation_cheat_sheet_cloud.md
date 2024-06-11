@@ -1,16 +1,16 @@
-# Manual Install Cheat Sheet
+# Manual Install Cheat Sheet on the Cloud.
 
 This is a handout for the Manual installation guide for [Trento](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md).
 As the original guide covers diffrent options of Trento installation, this is a short and compact version of all the required commands in order to install Trento.
 
 ## Manual Installation Agenda
 
-1. [Install Trento manually on SLE 15 SP5 virtual machine](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#installation)
-2. Install and configure [Prometheus](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-prometheus-optional), [PostgreSQL](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-postgresql) and [RabbitMQ](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-rabbitmq)
-3. Install and configure [Trento Web and Wanda by using RPM packages](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-trento-server-components)
-4. Creating a [Self-Signed Certificate](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#option-1-creating-a-self-signed-certificate)
-5. [Install and configure NGINX](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#install-and-configure-nginx)
-6. [Accessing the Trento UI](https://github.com/trento-project/docs/blob/update_manual_install_docs/guides/manual-installation.md#accessing-the-trento-web-ui)
+1. [Install Trento manually on SLE 15 SP5 virtual machine](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md)
+1. Install and configure [Prometheus](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#install-prometheus-optional), [PostgreSQL](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#install-postgresql) and [RabbitMQ](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#install-rabbitmq)
+1. Install and configure [Trento Web and Wanda by using RPM packages](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#install-trento-using-rpm-packages)
+1. Creating a [Self-Signed Certificate](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#option-1-creating-a-self-signed-certificate)
+1. [Install and configure NGINX](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#install-and-configure-nginx)
+1. [Accessing the Trento UI](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#accessing-the-trento-web-ui)
 
 ## Access machine
 
@@ -236,6 +236,7 @@ sudo zypper ar -f https://download.opensuse.org/repositories/devel:/sap:/trento:
 ```bash
 sudo zypper install trento-web trento-wanda
 ```
+
 ### Edit Trento Web configuration
 
 Use example keys for following steps
