@@ -278,13 +278,14 @@ Copy and paste this configuration to `/etc/trento/trento-web`
 AMQP_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost
 DATABASE_URL=ecto://trento_user:web_password@localhost/trento
 EVENTSTORE_URL=ecto://trento_user:web_password@localhost/trento_event_store
-PROMETHEUS_URL=http://localhost:9090
+ENABLE_ALERTING=false
 CHARTS_ENABLED=true
+PROMETHEUS_URL=http://localhost:9090
 ADMIN_USER=admin
 ADMIN_PASSWORD=test1234
-ENABLE_ALERTING=false
-ENABLE_API_KEY=false
+ENABLE_API_KEY=true
 PORT=4000
+TRENTO_WEB_ORIGIN=trento.example.com
 SECRET_KEY_BASE=rd9yv6K3DLqovfCzA+qjX6T2YM1gVYVxl+e/fx3gXWHc6WFBkF3Fi9AEEsZGubE3
 ACCESS_TOKEN_ENC_SECRET=ejkJuJSrzX9QL2VD5Lb2epho2pCRhDSqpfKASXEtgvGye0qDltJrU1ZGHY8oim2E
 REFRESH_TOKEN_ENC_SECRET=CKdeaee2IBoQA1zxVqXlqa8a2oWYGkFPmlkBvsM0yYBa78dViwj2oGxw802QXisi
