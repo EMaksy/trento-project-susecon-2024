@@ -363,11 +363,12 @@ Start NGINX
 ```
 
 Open firewalld for NGINX
-´´´bash
+
+```bash
 firewall-cmd --zone=public --add-service=https --permanent
 firewall-cmd --zone=public --add-service=http --permanent
 firewall-cmd --reload
-´´´
+```
 
 Create and configurate Trento:
 
