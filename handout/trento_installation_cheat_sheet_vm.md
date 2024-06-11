@@ -320,7 +320,7 @@ journalctl -fu trento-web
 Check trento-wanda logs:
 
 ```bash
-journalctl -fu trento-wnda
+journalctl -fu trento-wanda
 ```
 
 Validate trento health status
