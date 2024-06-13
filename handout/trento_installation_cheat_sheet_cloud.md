@@ -15,12 +15,12 @@ As the original guide covers diffrent options of Trento installation, this is a 
 ## Access machine
 
 ```bash
-ssh <<USER>>@<<IP_ADDRESS>> -i <<PATH_TO_PRIVATE_SSH_KEY>>
+ssh trento@<<IP_ADDRESS>> -i <<PATH_TO_PRIVATE_SSH_KEY>>
 ```
 
 ## Install Prometheus
 
-### Enable Package hub for Prometheus
+### Enable Package Hub for Prometheus
 
 ```bash
 sudo SUSEConnect --product PackageHub/15.5/x86_64
@@ -82,7 +82,7 @@ sudo systemctl status prometheus
 
 ## Install PostgreSQL
 
-### Install PostgreSQL rpm
+### Install PostgreSQL RPM
 
 ```bash
 sudo zypper in postgresql-server
@@ -153,7 +153,7 @@ host   trento,trento_event_store  trento_user   0.0.0.0/0   md5
 sudo vim /var/lib/pgsql/data/postgresql.conf
 ```
 
-Add at the beginning of the config file.
+Add at the beginning of the config file:
 
 ```bash
 listen_addresses = '*'
@@ -239,43 +239,33 @@ sudo zypper install trento-web trento-wanda
 
 ### Edit Trento Web configuration
 
-Use example keys for following steps
-
-```bash
-SECRET_KEY_BASE=rd9yv6K3DLqovfCzA+qjX6T2YM1gVYVxl+e/fx3gXWHc6WFBkF3Fi9AEEsZGubE3
-ACCESS_TOKEN_ENC_SECRET=ejkJuJSrzX9QL2VD5Lb2epho2pCRhDSqpfKASXEtgvGye0qDltJrU1ZGHY8oim2E
-REFRESH_TOKEN_ENC_SECRET=CKdeaee2IBoQA1zxVqXlqa8a2oWYGkFPmlkBvsM0yYBa78dViwj2oGxw802QXisi
-```
-
 Edit a trento web configuration
 
 ```bash
-sudo vim /etc/trento/trento-web
+sudo  vim /etc/trento/trento-web
 ```
 
 Copy and paste this configuration to `/etc/trento/trento-web`
 
-Required changes for the configuration:
-
-Change:
-SECRET_KEY_BASE
-ACCESS_TOKEN_ENC_SECRET
-REFRESH_TOKEN_ENC_SECRET
-
-```bash
+> **Note** : Adjust TRENTO_WEB_ORIGIN env ```trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com``` to your dedicated number.
+>
+> Example: TRENTO_WEB_ORIGIN=trento.susecon24.1.com
+> 
+```
 AMQP_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost
 DATABASE_URL=ecto://trento_user:web_password@localhost/trento
 EVENTSTORE_URL=ecto://trento_user:web_password@localhost/trento_event_store
+ENABLE_ALERTING=false
+CHARTS_ENABLED=true
 PROMETHEUS_URL=http://localhost:9090
+ADMIN_USER=admin
+ADMIN_PASSWORD=test1234
+ENABLE_API_KEY=false
+PORT=4000
+TRENTO_WEB_ORIGIN=trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com
 SECRET_KEY_BASE=rd9yv6K3DLqovfCzA+qjX6T2YM1gVYVxl+e/fx3gXWHc6WFBkF3Fi9AEEsZGubE3
 ACCESS_TOKEN_ENC_SECRET=ejkJuJSrzX9QL2VD5Lb2epho2pCRhDSqpfKASXEtgvGye0qDltJrU1ZGHY8oim2E
 REFRESH_TOKEN_ENC_SECRET=CKdeaee2IBoQA1zxVqXlqa8a2oWYGkFPmlkBvsM0yYBa78dViwj2oGxw802QXisi
-ADMIN_USER=admin
-ADMIN_PASSWORD=test1234
-ENABLE_ALERTING=false
-ENABLE_API_KEY=false
-CHARTS_ENABLED=true
-PORT=4000
 ```
 
 Create and adjust wanda configuration.
@@ -284,44 +274,57 @@ Create and adjust wanda configuration.
  sudo vim /etc/trento/trento-wanda
 ```
 
-```bash
+```
 CORS_ORIGIN=http://localhost
-SECRET_KEY_BASE=rd9yv6K3DLqovfCzA+qjX6T2YM1gVYVxl+e/fx3gXWHc6WFBkF3Fi9AEEsZGubE3
-ACCESS_TOKEN_ENC_SECRET=ejkJuJSrzX9QL2VD5Lb2epho2pCRhDSqpfKASXEtgvGye0qDltJrU1ZGHY8oim2E
 AMQP_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost
 DATABASE_URL=ecto://wanda_user:wanda_password@localhost/wanda
 PORT=4001
+SECRET_KEY_BASE=rd9yv6K3DLqovfCzA+qjX6T2YM1gVYVxl+e/fx3gXWHc6WFBkF3Fi9AEEsZGubE3
+ACCESS_TOKEN_ENC_SECRET=ejkJuJSrzX9QL2VD5Lb2epho2pCRhDSqpfKASXEtgvGye0qDltJrU1ZGHY8oim2E
 ```
 
 Enable Trento server
 
 ```bash
-systemctl enable --now trento-web trento-wanda
+sudo systemctl enable --now trento-web trento-wanda
 ```
 
 Validate trento health status
 
 ```bash
-curl http://localhost:4000/api/readyz; curl http://localhost:4000/api/healthz; echo
-curl http://localhost:4001/api/readyz; curl http://localhost:4001/api/healthz; echo
+sudo curl http://localhost:4000/api/readyz; sudo curl http://localhost:4000/api/healthz; echo
+sudo curl http://localhost:4001/api/readyz; sudo curl http://localhost:4001/api/healthz; echo
 ```
 
-## Generate SSL KEY
+## Move provided SSL Certificate/Key
 
-Prepare SSL certificate
+Navigate to SSL certificate and key directory: 
 
 ```bash
-sudo openssl req -newkey rsa:2048 --nodes -keyout trento.key -x509 -days 5 -out trento.crt -addext "subjectAltName = DNS:trento.example.com"
+cd <<PATH_TO_CERTIFICATE>>
 ```
 
-Move generated keys
+Move SSL key:
 
 ```bash
-sudo mv trento.key /etc/ssl/private/trento.key
+sudo mv trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.key /etc/ssl/private/
 ```
 
+Example:
 ```bash
-sudo mv trento.crt /etc/ssl/certs/trento.crt
+sudo mv trento.susecon24.1.key /etc/ssl/private/
+```
+
+Move SSL certificate:
+
+```bash
+sudo mv trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.crt /etc/ssl/certs/
+```
+
+Example:
+
+```bash
+sudo mv trento.susecon24.1.crt /etc/ssl/certs/
 ```
 
 ## Install and configure NGINX
@@ -344,23 +347,29 @@ Create and configurate Trento:
 sudo vim /etc/nginx/conf.d/trento.conf
 ```
 
-Create configuration file at `/etc/nginx/conf.d/trento.conf`
+Create and adjust configuration file at `/etc/nginx/conf.d/trento.conf`
+
+Adjust in NGINX config:  
+- server_name
+- ssl_certificate
+- ssl_certificate_key
 
 ```
 server {
     # Redirect HTTP to HTTPS
     listen 80;
-    server_name trento.example.com;
+    server_name trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com; 
     return 301 https://$host$request_uri;
 }
 
 server {
     # SSL configuration
     listen 443 ssl;
-    server_name trento.example.com;
-
-    ssl_certificate /etc/ssl/certs/trento.crt;
-    ssl_certificate_key /etc/ssl/private/trento.key;
+    server_name trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com; 
+     
+    # Adjust path of certificate 
+    ssl_certificate /etc/ssl/certs/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.crt.
+    ssl_certificate_key /etc/ssl/private/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.key;
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
@@ -427,7 +436,9 @@ Add entry to configuration on top of the config file:
 <<IP_ADRESS_OF_VM>>   trento.example.com
 ```
 
-Access Trento through browser by visiting `trento.example.com`.
+Access Trento through browser by visiting `trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com`.
+
+Exmaple `https://trento.susecon24.1.com
 
 ## Learn more about Trento
 
