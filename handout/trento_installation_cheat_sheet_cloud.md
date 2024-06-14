@@ -242,7 +242,7 @@ sudo zypper install trento-web trento-wanda
 Edit a trento web configuration
 
 ```bash
-sudo  vim /etc/trento/trento-web
+sudo vim /etc/trento/trento-web
 ```
 
 Copy and paste this configuration to `/etc/trento/trento-web`
@@ -298,16 +298,12 @@ sudo curl http://localhost:4001/api/readyz; sudo curl http://localhost:4001/api/
 
 ## Move provided SSL Certificate/Key
 
-Navigate to SSL certificate and key directory: 
-
-```bash
-cd <<PATH_TO_CERTIFICATE>>
-```
+Move SSL certificate and key to correct directory: 
 
 Move SSL key:
 
 ```bash
-sudo mv trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.key /etc/ssl/private/
+sudo mv <<PATH_TO_KEY>>/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.key /etc/ssl/private/
 ```
 
 Example:
@@ -318,7 +314,7 @@ sudo mv trento.susecon24.1.key /etc/ssl/private/
 Move SSL certificate:
 
 ```bash
-sudo mv trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.crt /etc/ssl/certs/
+sudo mv <<PATH_TO_CERTIFICATE>>/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.crt /etc/ssl/certs/
 ```
 
 Example:
