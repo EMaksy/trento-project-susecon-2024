@@ -15,7 +15,13 @@ As the original guide covers diffrent options of Trento installation, this is a 
 ## Access machine
 
 ```bash
-ssh trento@<<IP_ADDRESS>> -i <<PATH_TO_PRIVATE_SSH_KEY>>
+ssh trento@<<LAB_MACHINE_ADRESS>> -i C:\Users\User\Downloads\id_rsa_susecon24
+```
+
+Example:
+
+```bash
+ssh trento@trento.susecon24.1.com -i C:\Users\User\Downloads\id_rsa_susecon24
 ```
 
 ## Install Prometheus
@@ -247,10 +253,10 @@ sudo vim /etc/trento/trento-web
 
 Copy and paste this configuration to `/etc/trento/trento-web`
 
-> **Note** : Adjust TRENTO_WEB_ORIGIN env ```trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com``` to your dedicated number.
+> **Note** : Adjust TRENTO_WEB_ORIGIN env `trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com` to your dedicated number.
 >
 > Example: TRENTO_WEB_ORIGIN=trento.susecon24.1.com
-> 
+
 ```
 AMQP_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost
 DATABASE_URL=ecto://trento_user:web_password@localhost/trento
@@ -298,7 +304,7 @@ sudo curl http://localhost:4001/api/readyz; sudo curl http://localhost:4001/api/
 
 ## Move provided SSL Certificate/Key
 
-Move SSL certificate and key to correct directory: 
+Move SSL certificate and key to correct directory:
 
 Move SSL key:
 
@@ -307,6 +313,7 @@ sudo mv <<PATH_TO_KEY>>/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.key /etc/ssl
 ```
 
 Example:
+
 ```bash
 sudo mv trento.susecon24.1.key /etc/ssl/private/
 ```
@@ -345,7 +352,8 @@ sudo vim /etc/nginx/conf.d/trento.conf
 
 Create and adjust configuration file at `/etc/nginx/conf.d/trento.conf`
 
-Adjust in NGINX config:  
+Adjust in NGINX config:
+
 - server_name
 - ssl_certificate
 - ssl_certificate_key
@@ -354,16 +362,16 @@ Adjust in NGINX config:
 server {
     # Redirect HTTP to HTTPS
     listen 80;
-    server_name trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com; 
+    server_name trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com;
     return 301 https://$host$request_uri;
 }
 
 server {
     # SSL configuration
     listen 443 ssl;
-    server_name trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com; 
-     
-    # Adjust path of certificate 
+    server_name trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com;
+
+    # Adjust path of certificate
     ssl_certificate /etc/ssl/certs/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.crt.
     ssl_certificate_key /etc/ssl/private/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.key;
 
