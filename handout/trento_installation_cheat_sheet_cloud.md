@@ -1,7 +1,7 @@
-# Manual Install Cheat Sheet on the Cloud.
+# Manual Installation Cheat Sheet on the Cloud.
 
 This is a handout for the Manual installation guide for [Trento](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md).
-As the original guide covers diffrent options of Trento installation, this is a short and compact version of all the required commands in order to install Trento.
+As the original guide covers different options of Trento installation, this is a short and compact version of all the required commands in order to install Trento.
 
 ## Manual Installation Agenda
 
@@ -14,14 +14,18 @@ As the original guide covers diffrent options of Trento installation, this is a 
 
 ## Access machine
 
+1: Open PowerShell in Windows
+
+2: Access Lab machine with ssh
+
 ```bash
-ssh trento@<<LAB_MACHINE_ADRESS>> -i C:\Users\User\Downloads\id_rsa_susecon24
+ssh trento@<<LAB_MACHINE_ADRESS>> -i "C:\Users\User\Downloads\id_rsa_susecon24"
 ```
 
 Example:
 
 ```bash
-ssh trento@trento.susecon24.1.com -i C:\Users\User\Downloads\id_rsa_susecon24
+ssh trento@trento.susecon24.1.com -i "C:\Users\User\Downloads\id_rsa_susecon24"
 ```
 
 ## Install Prometheus
