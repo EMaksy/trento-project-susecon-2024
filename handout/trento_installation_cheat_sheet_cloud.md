@@ -13,10 +13,17 @@ As the original guide covers different options of Trento installation, this is a
 1. [Accessing the Trento UI](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#accessing-the-trento-web-ui)
 
 ## Access machine
+1: Download a key for accessing lab machine.
 
-1: Open PowerShell in Windows
+```bash
+https://paste.opensuse.org/pastes/f3aad960b1b5
+```
 
-2: Access Lab machine with ssh
+2: Open PowerShell in Windows
+
+3: Access Lab machine with ssh
+### Connect to lab machine:
+
 
 ```bash
 ssh trento@<<LAB_MACHINE_ADRESS>> -i "C:\Users\User\Downloads\id_rsa_susecon24"
@@ -25,7 +32,7 @@ ssh trento@<<LAB_MACHINE_ADRESS>> -i "C:\Users\User\Downloads\id_rsa_susecon24"
 Example:
 
 ```bash
-ssh trento@trento.susecon24.1.com -i "C:\Users\User\Downloads\id_rsa_susecon24"
+ssh trento@trento.susecon24.3.com -i "C:\Users\User\Downloads\id_rsa_susecon24"
 ```
 
 ## Install Prometheus
@@ -431,18 +438,6 @@ sudo systemctl reload nginx
 ```
 
 ## Access Trento
-
-Edit `/etc/hosts` on your machine
-
-```bash
-sudo vim /etc/hosts
-```
-
-Add entry to configuration on top of the config file:
-
-```
-<<IP_ADRESS_OF_VM>>   trento.example.com
-```
 
 Access Trento through browser by visiting `trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com`.
 
