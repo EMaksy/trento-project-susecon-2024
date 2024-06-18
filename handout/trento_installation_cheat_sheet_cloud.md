@@ -242,12 +242,6 @@ sudo rabbitmqctl set_permissions -p vhost trento_user ".*" ".*" ".*"
 
 ## Install Trento using RPM packages
 
-### Add open build service repository
-
-```bash
-sudo zypper ar -f https://download.opensuse.org/repositories/devel:/sap:/trento:/factory/SLE_15_SP5/ devel:sap:trento:factory
-```
-
 ### Install Trento-Web/Wanda RPM
 
 ```bash
@@ -383,7 +377,7 @@ server {
     server_name trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.com;
 
     # Adjust path of certificate
-    ssl_certificate /etc/ssl/certs/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.crt.
+    ssl_certificate /etc/ssl/certs/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.crt;
     ssl_certificate_key /etc/ssl/private/trento.susecon24.<<ENTER_YOUR_NUMBER_HERE>>.key;
 
     ssl_protocols TLSv1.2 TLSv1.3;
