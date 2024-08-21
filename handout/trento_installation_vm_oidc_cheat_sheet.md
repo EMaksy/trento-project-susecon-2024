@@ -1,4 +1,4 @@
-# Manual Install Cheat Sheet VM SLE_15_SP5
+# Manual Install Cheat Sheet VM SLE_15_SP5 SLES4SAP with enabled OIDC feautre.
 
 This is a handout for the Manual installation guide for [Trento](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md).
 As the original guide covers diffrent options of Trento installation, this is a short and compact version of all the required commands in order to install Trento.
@@ -108,14 +108,15 @@ firewall-cmd --reload
 ```
 
 Check if postgres is running:
+
 ```bash
-systemctl status postgresql.service 
+systemctl status postgresql.service
 ```
 
 ### Switch to postgres user and activate PostgreSQL interface
 
 ```bash
- su - postgres
+su - postgres
 psql
 ```
 
@@ -125,6 +126,7 @@ psql
 CREATE DATABASE wanda;
 CREATE DATABASE trento;
 CREATE DATABASE trento_event_store;
+CREATE DATABASE keycloak;
 ```
 
 ### Create users
@@ -132,6 +134,7 @@ CREATE DATABASE trento_event_store;
 ```bash
 CREATE USER wanda_user WITH PASSWORD 'wanda_password';
 CREATE USER trento_user WITH PASSWORD 'web_password';
+CREATE USER keycloak WITH PASSWORD 'password';
 ```
 
 ### Grant required privileges
@@ -143,6 +146,9 @@ GRANT ALL ON SCHEMA public TO wanda_user;
 GRANT ALL ON SCHEMA public TO trento_user;
 \c trento_event_store;
 GRANT ALL ON SCHEMA public TO trento_user;
+\c keycloak
+GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;
+GRANT ALL ON SCHEMA public TO keycloak;
 \q
 ```
 
@@ -163,6 +169,7 @@ Add on top of the configuration:
 ```bash
 host   wanda                      wanda_user    0.0.0.0/0   md5
 host   trento,trento_event_store  trento_user   0.0.0.0/0   md5
+host   keycloak                   keycloak      0.0.0.0/0   md5
 ```
 
 ### Open network interface for Trento
@@ -228,7 +235,6 @@ Check health status
  systemctl status rabbitmq-server
 ```
 
-
 ### Configure RabbitMQ
 
 Create a new RabbitMQ user
@@ -249,11 +255,153 @@ Create a new RabbitMQ user
  rabbitmqctl set_permissions -p vhost trento_user ".*" ".*" ".*"
 ```
 
+## Simulate IDP provider
+
+### Create Database user
+
+```
+su - postgres
+```
+
+```
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+	CREATE USER keycloak WITH PASSWORD 'password';
+	CREATE DATABASE keycloak;
+	GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;
+	\c keycloak
+	GRANT ALL ON SCHEMA public TO keycloak;
+	\q
+EOSQL
+```
+
+```
+exit
+```
+
+### Create fixture realm.json
+
+```
+{
+  "id": "trento",
+  "realm": "trento",
+  "sslRequired": "none",
+  "enabled": true,
+  "eventsEnabled": true,
+  "eventsExpiration": 900,
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "attributes": {
+    "adminEventsExpiration": "900"
+  },
+  "clients": [
+    {
+      "id": "trento-web",
+      "clientId": "trento-web",
+      "name": "trento-web",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "ihfasdEaB5M5r44i4AbNulmLWjgejluX",
+      "clientAuthenticatorType": "client-secret",
+      "rootUrl": "https://localhost:4000",
+      "adminUrl": "https://localhost:4000",
+      "baseUrl": "https://localhost:4000",
+      "redirectUris": ["https://localhost:4000/auth/oidc_callback"],
+      "webOrigins": ["https://localhost:4000"]
+    }
+  ],
+  "users": [
+    {
+      "id": "trento-admin",
+      "email": "trentoadmin@trento.suse.com",
+      "username": "admin",
+      "firstName": "Trento admin user",
+      "lastName": "Superadmin",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "admin",
+          "value": "admin"
+        }
+      ]
+    },
+    {
+      "id": "trento-idp-user",
+      "email": "trentoidp@trento.suse.com",
+      "username": "trentoidp",
+      "firstName": "Trento IDP user",
+      "lastName": "Of Monk",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "password"
+        }
+      ]
+    }
+  ]
+}
+```
+### Enable docker repo
+
+```bash
+vim docker-compose.yml
+```
+
+### Install docker and docker-compose
+
+```bash
+zypper in docker docker-compose
+```
+
+#### Start docker service
+
+```bash
+systemctl start docker.service
+```
+### Create docker-compose
+Create docker-compose file
+
+```bash
+vim docker-compose.yml
+```
+
+Copy the following docker file and change IP in KC_DB_URL from `192.168.122.222` to new ip
+
+```bash
+version: "3"
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_DB: postgres
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KC_DB_URL: "jdbc:postgresql://192.168.122.222:5432/keycloak"
+      KC_REALM_NAME: trento
+      KEYCLOAK_ADMIN: keycloak
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - 8081:8080
+    volumes:
+      - ./realm.json:/opt/keycloak/data/import/realm.json:ro
+```
+
+
+### Run Keycloak
+
+```
+docker-compose up -d
+```
+
 ## Install Trento using RPM packages
 
 ### Add open build service repository
-
-from [develop](https://build.opensuse.org/package/show/devel:sap:trento:factory/trento-web):
+As OIDC is not released use factory from [develop](https://build.opensuse.org/package/show/devel:sap:trento:factory/trento-web):
 
 ```bash
 zypper addrepo https://download.opensuse.org/repositories/devel:sap:trento:factory/15.5/devel:sap:trento:factory.repo
@@ -277,16 +425,19 @@ Edit a trento web configuration
 
 Copy and paste this configuration to `/etc/trento/trento-web`
 
-
 ```bash
 AMQP_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost
 DATABASE_URL=ecto://trento_user:web_password@localhost/trento
 EVENTSTORE_URL=ecto://trento_user:web_password@localhost/trento_event_store
 ENABLE_ALERTING=false
+ENABLE_OIDC=true
+OIDC_CLIENT_ID=trento-web
+OIDC_CLIENT_SECRET=ihfasdEaB5M5r44i4AbNulmLWjgejluX
+OIDC_BASE_URL=http://localhost:4000
 CHARTS_ENABLED=true
 PROMETHEUS_URL=http://localhost:9090
 ADMIN_USER=admin
-ADMIN_PASSWORD=test1234
+ADMIN_PASSWORD=adminpassword
 ENABLE_API_KEY=true
 PORT=4000
 TRENTO_WEB_ORIGIN=trento.example.com
@@ -321,6 +472,7 @@ Check trento-web logs:
 ```bash
 journalctl -fu trento-web
 ```
+
 Check trento-wanda logs:
 
 ```bash
@@ -474,7 +626,7 @@ Access Trento through browser by visiting `trento.example.com`.
 Use login data to access Trento:
 
 - Username: admin
-- Password: test1234
+- Password: adminpassword
 
 ## Learn more about Trento
 
@@ -484,10 +636,10 @@ Thanks for following the guide, feel free to learn more about [Trento](https://w
 
 ## Test Trento by using fake agents to see Trento in action
 
-In order to simulate trento for this demo, we will use [barbecue  docker images](https://github.com/trento-project/barbecue) to simulate real agents installed on a host system.
-
+In order to simulate trento for this demo, we will use [barbecue docker images](https://github.com/trento-project/barbecue) to simulate real agents installed on a host system.
 
 Enable docker container`s module.
+
 ```
 SUSEConnect --product sle-module-containers/15.5/x86_64
 ```
@@ -495,6 +647,7 @@ SUSEConnect --product sle-module-containers/15.5/x86_64
 ```
 zypper install docker
 ```
+
 ```
 systemctl enable --now docker
 ```
@@ -504,18 +657,21 @@ Copy the API key from https://trento.example.com/settings
 Replace TRENTO_API_KEY=<API_KEY> with Trento's setting key in the docker commands.
 
 Edit and start the first fake agent
+
 ```
 docker run -d --hostname hana_node01 --network=host -e TRENTO_API_KEY=<API_KEY> -e TRENTO_FACTS_SERVICE_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost  -e TRENTO_SERVER_URL=http://localhost:4000 ghcr.io/trento-project/barbecue-hana_node01
 ```
+
 After executing the first Docker command, a new host should be added at https://trento.example.com/hosts.
 
 Start the second fake agent host:
+
 ```
 docker run -d --hostname hana_node02 --network=host -e TRENTO_API_KEY=<API_KEY> -e TRENTO_FACTS_SERVICE_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost  -e TRENTO_SERVER_URL=http://localhost:4000 ghcr.io/trento-project/barbecue-hana_node02
 ```
 
-After executing both commands, a cluster will be shown at 
-https://trento.example.com/clusters. 
+After executing both commands, a cluster will be shown at
+https://trento.example.com/clusters.
 
 Test checks execution on the newly added Cluster
 
