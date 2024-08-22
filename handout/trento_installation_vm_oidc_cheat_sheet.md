@@ -257,27 +257,6 @@ Create a new RabbitMQ user
 
 ## Simulate IDP provider
 
-### Create Database user
-
-```
-su - postgres
-```
-
-```
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-	CREATE USER keycloak WITH PASSWORD 'password';
-	CREATE DATABASE keycloak;
-	GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;
-	\c keycloak
-	GRANT ALL ON SCHEMA public TO keycloak;
-	\q
-EOSQL
-```
-
-```
-exit
-```
-
 ### Create fixture realm.json
 
 ```
@@ -302,11 +281,11 @@ exit
       "publicClient": false,
       "secret": "ihfasdEaB5M5r44i4AbNulmLWjgejluX",
       "clientAuthenticatorType": "client-secret",
-      "rootUrl": "https://localhost:4000",
-      "adminUrl": "https://localhost:4000",
-      "baseUrl": "https://localhost:4000",
-      "redirectUris": ["https://localhost:4000/auth/oidc_callback"],
-      "webOrigins": ["https://localhost:4000"]
+      "rootUrl": "https://trento.example.com",
+      "adminUrl": "https://trento.example.com",
+      "baseUrl": "https://trento.example.com",
+      "redirectUris": ["https://trento.example.com/auth/oidc_callback"],
+      "webOrigins": ["https://trento.example.com"]
     }
   ],
   "users": [
@@ -321,8 +300,8 @@ exit
       "credentials": [
         {
           "temporary": false,
-          "type": "admin",
-          "value": "admin"
+          "type": "adminpassword",
+          "value": "adminpassword"
         }
       ]
     },
@@ -425,17 +404,20 @@ Edit a trento web configuration
 
 Copy and paste this configuration to `/etc/trento/trento-web`
 
+Note: Adjust `OIDC_BASE_URL=http://192.168.122.222:8081/realms/trento` for IDP
+
 ```bash
 AMQP_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost
 DATABASE_URL=ecto://trento_user:web_password@localhost/trento
 EVENTSTORE_URL=ecto://trento_user:web_password@localhost/trento_event_store
 ENABLE_ALERTING=false
 ENABLE_OIDC=true
+#OIDC_CALLBACK_URL= OPTIONAL
 OIDC_CLIENT_ID=trento-web
 OIDC_CLIENT_SECRET=ihfasdEaB5M5r44i4AbNulmLWjgejluX
-OIDC_BASE_URL=http://localhost:4000
+OIDC_BASE_URL=http://192.168.122.222:8081/realms/trento
 CHARTS_ENABLED=true
-PROMETHEUS_URL=http://localhost:9090
+PROMETHEUS_URL=https://localhost:9090
 ADMIN_USER=admin
 ADMIN_PASSWORD=adminpassword
 ENABLE_API_KEY=true
@@ -444,6 +426,7 @@ TRENTO_WEB_ORIGIN=trento.example.com
 SECRET_KEY_BASE=rd9yv6K3DLqovfCzA+qjX6T2YM1gVYVxl+e/fx3gXWHc6WFBkF3Fi9AEEsZGubE3
 ACCESS_TOKEN_ENC_SECRET=ejkJuJSrzX9QL2VD5Lb2epho2pCRhDSqpfKASXEtgvGye0qDltJrU1ZGHY8oim2E
 REFRESH_TOKEN_ENC_SECRET=CKdeaee2IBoQA1zxVqXlqa8a2oWYGkFPmlkBvsM0yYBa78dViwj2oGxw802QXisi
+
 ```
 
 Create and adjust wanda configuration.
@@ -585,6 +568,20 @@ server {
         proxy_set_header Connection "upgrade";
 
         proxy_pass http://localhost:4000;
+    }
+    # Keycloak IDP provider
+    location /realms/trento {
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+        # The Important Websocket Bits!
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_pass http://localhost:8081/realms/trento;
     }
 }
 ```
