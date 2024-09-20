@@ -385,8 +385,7 @@ docker-compose up -d
 
 ### Ensure on WEB UI that the client was set up correct and redirect url for realm is correct
 
-![Keycloak realm settings](./handout/images/keycloak_settings.png)
-
+![Keycloak realm settings](https://github.com/EMaksy/trento-project-susecon-2024/blob/main/handout/images/keycloak_settings.png)
 
 ## Install Trento using RPM packages
 
@@ -415,7 +414,7 @@ Edit a trento web configuration
 
 Copy and paste this configuration to `/etc/trento/trento-web`
 
-Note: Adjust `OIDC_BASE_URL=http://192.168.122.222:8081/realms/trento` for IDP
+Note: Adjust `OIDC_BASE_URL=http://192.168.122.20:8081/realms/trento` for IDP
 
 ```bash
 AMQP_URL=amqp://trento_user:trento_user_password@localhost:5672/vhost
