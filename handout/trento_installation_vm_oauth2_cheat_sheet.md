@@ -288,10 +288,7 @@ vim realm.json
       "rootUrl": "https://trento.example.com",
       "adminUrl": "https://trento.example.com",
       "baseUrl": "https://trento.example.com",
-      "redirectUris": [
-        "http://localhost:4000/auth/oidc_callback",
-        "http://localhost:4000/auth/oauth2_callback"
-      ],
+      "redirectUris": ["https://trento.example.com/auth/oidc_callback","https://trento.example.com/auth/oauth2_callback"],
       "webOrigins": ["https://trento.example.com"]
     }
   ],
@@ -307,8 +304,8 @@ vim realm.json
       "credentials": [
         {
           "temporary": false,
-          "type": "adminpassword",
-          "value": "adminpassword"
+          "type": "admin",
+          "value": "admin"
         }
       ]
     },
@@ -331,6 +328,7 @@ vim realm.json
   ]
 }
 ```
+
 ### Enable docker repo
 
 ```bash
@@ -348,7 +346,9 @@ zypper in docker docker-compose
 ```bash
 systemctl start docker.service
 ```
+
 ### Create docker-compose
+
 Create docker-compose file
 
 ```bash
@@ -377,23 +377,27 @@ services:
       - ./realm.json:/opt/keycloak/data/import/realm.json:ro
 ```
 
-
 ### Run Keycloak
 
 ```
 docker-compose up -d
 ```
 
+### Ensure on WEB UI that the client was set up correct and redirect url for realm is correct
+
+![Keycloak realm settings](./handout/images/keycloak_settings.png)
+
+
 ## Install Trento using RPM packages
 
 ### Add open build service repository
+
 As OAUTH is not released use factory from [develop](https://build.opensuse.org/package/show/devel:sap:trento:factory/trento-web):
 
 ```bash
 zypper addrepo https://download.opensuse.org/repositories/devel:sap:trento:factory/15.5/devel:sap:trento:factory.repo
 zypper refresh
 ```
-
 
 ### Install Trento-Web/Wanda RPM
 
@@ -421,12 +425,12 @@ ENABLE_ALERTING=false
 ENABLE_OAUTH2=true
 OAUTH2_CLIENT_ID=trento-web
 OAUTH2_CLIENT_SECRET=ihfasdEaB5M5r44i4AbNulmLWjgejluX
-OAUTH2_BASE_URL=http://192.168.122.178:8081/realms/trento
-OAUTH2_AUTHORIZE_URL="http://192.168.122.178:8081/realms/trento/protocol/openid-connect/auth"
-OAUTH2_TOKEN_URL="http://192.168.122.178:8081/realms/trento/protocol/openid-connect/token"
-OAUTH2_USER_URL="http://localhost:8081/realms/trento/protocol/openid-connect/userinfo"
-#OAUTH2_SCOPES= OPTIONAL
-#OAUTH2_CALLBACK_URL= OPTIONAL
+OAUTH2_BASE_URL=http://192.168.122.20:8081/realms/trento
+OAUTH2_AUTHORIZE_URL=http://192.168.122.20:8081/realms/trento/protocol/openid-connect/auth
+OAUTH2_TOKEN_URL=http://192.168.122.20:8081/realms/trento/protocol/openid-connect/token
+OAUTH2_USER_URL=http://192.168.122.20:8081/realms/trento/protocol/openid-connect/userinfo
+OAUTH2_SCOPES="profile email openid"
+#OAUTH2_CALLBACK_URL=http://192.168.122.20:8081/auth/oauth2_callback
 CHARTS_ENABLED=true
 PROMETHEUS_URL=https://localhost:9090
 ADMIN_USER=admin
@@ -438,6 +442,10 @@ SECRET_KEY_BASE=rd9yv6K3DLqovfCzA+qjX6T2YM1gVYVxl+e/fx3gXWHc6WFBkF3Fi9AEEsZGubE3
 ACCESS_TOKEN_ENC_SECRET=ejkJuJSrzX9QL2VD5Lb2epho2pCRhDSqpfKASXEtgvGye0qDltJrU1ZGHY8oim2E
 REFRESH_TOKEN_ENC_SECRET=CKdeaee2IBoQA1zxVqXlqa8a2oWYGkFPmlkBvsM0yYBa78dViwj2oGxw802QXisi
 ```
+
+> [!NOTE]  
+> OAUTH2_SCOPES are optional, but every IDP provider requires diffrent scopes --> KEYCLOAK requires profile email openid
+
 
 Create and adjust wanda configuration.
 
