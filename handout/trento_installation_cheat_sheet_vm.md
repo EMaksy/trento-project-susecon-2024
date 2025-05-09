@@ -1,11 +1,11 @@
-# Manual Install Cheat Sheet VM SLE_15_SP5
+# Manual Install Cheat Sheet VM SLE_15_SP6
 
-This is a handout for the Manual installation guide for [Trento](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md).
+This is a handout for the Manual installation guide for [Trento]([https://github.com/trento-project/docs/blob/main/guides/manual-installation.md](https://github.com/trento-project/docs/blob/main/guides/manual-installation.adoc)).
 As the original guide covers diffrent options of Trento installation, this is a short and compact version of all the required commands in order to install Trento.
 
 ## Manual Installation Agenda
 
-1. [Install Trento manually on SLE 15 SP5 virtual machine](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md)
+1. [Install Trento manually on SLE 15 SP6 virtual machine](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md)
 1. Install and configure [Prometheus](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#install-prometheus-optional), [PostgreSQL](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#install-postgresql) and [RabbitMQ](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#install-rabbitmq)
 1. Install and configure [Trento Web and Wanda by using RPM packages](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#install-trento-using-rpm-packages)
 1. Creating a [Self-Signed Certificate](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md#option-1-creating-a-self-signed-certificate)
