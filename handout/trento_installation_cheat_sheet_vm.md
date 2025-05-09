@@ -29,7 +29,7 @@ zypper in vim
 ### Enable Package hub for Prometheus
 
 ```bash
-SUSEConnect --product PackageHub/15.5/x86_64
+SUSEConnect --product PackageHub/15.6/x86_64
 ```
 
 ### Add the prometheus user/group
@@ -256,7 +256,7 @@ Create a new RabbitMQ user
 from [develop](https://build.opensuse.org/package/show/devel:sap:trento:factory/trento-web):
 
 ```bash
-zypper addrepo https://download.opensuse.org/repositories/devel:sap:trento:factory/15.5/devel:sap:trento:factory.repo
+zypper addrepo https://download.opensuse.org/repositories/devel:sap:trento:factory/15.6/devel:sap:trento:factory.repo
 zypper refresh
 ```
 
@@ -286,7 +286,7 @@ ENABLE_ALERTING=false
 CHARTS_ENABLED=true
 PROMETHEUS_URL=http://localhost:9090
 ADMIN_USER=admin
-ADMIN_PASSWORD=test1234
+ADMIN_PASSWORD=adminpassword
 ENABLE_API_KEY=true
 PORT=4000
 TRENTO_WEB_ORIGIN=trento.example.com
@@ -489,7 +489,7 @@ In order to simulate trento for this demo, we will use [barbecue  docker images]
 
 Enable docker container`s module.
 ```
-SUSEConnect --product sle-module-containers/15.5/x86_64
+SUSEConnect --product sle-module-containers/15.6/x86_64
 ```
 
 ```
